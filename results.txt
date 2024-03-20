@@ -1,0 +1,90 @@
+Results for A:
+ 1000 steps and 10 runs:
+Average distance from origin after 1000 steps: 31.5227812009677
+Average distance from [1, 0] axis after 1000 steps: 15.796516379957078
+Average step at which the walker exited the 10 radius: 108.6
+Average number of times the walker crossed the y-axis: 12.0
+Results for B:
+ 1500 steps and 10 runs:
+Average distance from origin after 1500 steps: 33.80363830070374
+Average distance from [1, 0] axis after 1500 steps: 26.26012652654635
+Average step at which the walker exited the 10 radius: 127.6
+Average number of times the walker crossed the y-axis: 27.6
+Results for C:
+ 2000 steps and 10 runs:
+Average distance from origin after 2000 steps: 39.555435563544975
+Average distance from [1, 0] axis after 2000 steps: 22.955882657426805
+Average step at which the walker exited the 10 radius: 122.2
+Average number of times the walker crossed the y-axis: 31.1
+Results for D:
+ 3500 steps and 10 runs:
+Average distance from origin after 3500 steps: 3.094037256706094
+Average distance from [1, 0] axis after 3500 steps: 1.6401143364833044
+Average step at which the walker exited the 10 radius: 186.3
+Average number of times the walker crossed the y-axis: 333.2
+Results for E:
+ 2500 steps and 10 runs:
+Average distance from origin after 2500 steps: 40.51548795055521
+Average distance from [1, 0] axis after 2500 steps: 29.83636479952733
+Average step at which the walker exited the 10 radius: 81.0
+Average number of times the walker crossed the y-axis: 39.5
+Results for F:
+ 3000 steps and 10 runs:
+Average distance from origin after 3000 steps: 66.29083627572692
+Average distance from [1, 0] axis after 3000 steps: 40.69391747858674
+Average step at which the walker exited the 10 radius: 75.1
+Average number of times the walker crossed the y-axis: 28.0
+Results for G:
+ 4000 steps and 10 runs:
+Average distance from origin after 4000 steps: 42.9024310152139
+Average distance from [1, 0] axis after 4000 steps: 34.27761061183863
+Average step at which the walker exited the 10 radius: 94.6
+Average number of times the walker crossed the y-axis: 45.3
+Results for H:
+ 6000 steps and 10 runs:
+Average distance from origin after 6000 steps: 67.52317533140197
+Average distance from [1, 0] axis after 6000 steps: 47.60304704419865
+Average step at which the walker exited the 10 radius: 74.0
+Average number of times the walker crossed the y-axis: 43.0
+Results for I:
+ 5000 steps and 10 runs:
+Average distance from origin after 5000 steps: 69.05758813418687
+Average distance from [1, 0] axis after 5000 steps: 42.3649531773444
+Average step at which the walker exited the 10 radius: 82.7
+Average number of times the walker crossed the y-axis: 71.0
+Results for J:
+ 4000 steps and 10 runs:
+Average distance from origin after 4000 steps: 56.35539905564851
+Average distance from [1, 0, 0] axis after 4000 steps: 43.9269363401061
+Average step at which the walker exited the 10 radius: 80.9
+Average number of times the walker crossed the y-axis: 39.0
+Results for K:
+ 4000 steps and 1 runs:
+Average distance from origin after 4000 steps: 81.74350127074322
+Average distance from [1, 0] axis after 4000 steps: 21.0
+Average step at which the walker exited the 10 radius: 1.0
+Average number of times the walker crossed the y-axis: 45.0
+Results for L:
+ 5000 steps and 10 runs:
+Average distance from origin after 5000 steps: 357.60645612104577
+Average distance from [1, 0, 0] axis after 5000 steps: 355.47861882616127
+Average step at which the walker exited the 10 radius: 81.2
+Average number of times the walker crossed the y-axis: 42.7
+Results for M:
+ 5000 steps and 10 runs:
+Average distance from origin after 5000 steps: 60.73664274808789
+Average distance from [1, 0, 0, 0] axis after 5000 steps: 49.49339477272646
+Average step at which the walker exited the 10 radius: 93.2
+Average number of times the walker crossed the y-axis: 51.5
+Results for N:
+ 5000 steps and 1 runs:
+Average distance from origin after 5000 steps: 8.602325267042627
+Average distance from [1, 0] axis after 5000 steps: 7.0
+Average step at which the walker exited the 10 radius: 48.0
+Average number of times the walker crossed the y-axis: 0.0
+Results for O:
+ 5000 steps and 1 runs:
+Average distance from origin after 5000 steps: 3.7416573867739413
+Average distance from [1, 0, 0] axis after 5000 steps: 3.605551275463989
+Average step at which the walker exited the 10 radius: 0.0
+Average number of times the walker crossed the y-axis: 714.0

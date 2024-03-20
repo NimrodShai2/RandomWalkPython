@@ -1,0 +1,280 @@
+{
+  "A": {
+    "type": "regular",
+    "times_to_run": 10,
+    "number_of_steps": 1000,
+    "walker": {
+      "n_dim": 2,
+      "magic_gates_placements": [],
+      "magic_gates_dests": [],
+      "obstacles": []
+    },
+    "axis": [
+      1,
+      0
+    ],
+    "radius": 10
+  },
+  "B": {
+    "type": "regular",
+    "times_to_run": 10,
+    "number_of_steps": 1500,
+    "walker": {
+      "n_dim": 2,
+      "magic_gates_placements": [],
+      "magic_gates_dests": [],
+      "obstacles": []
+    },
+    "axis": [
+      1,
+      0
+    ],
+    "radius": 10
+  },
+  "C": {
+    "type": "regular",
+    "times_to_run": 10,
+    "number_of_steps": 2000,
+    "walker": {
+      "n_dim": 2,
+      "magic_gates_placements": [],
+      "magic_gates_dests": [],
+      "obstacles": []
+    },
+    "axis": [
+      1,
+      0
+    ],
+    "radius": 10
+  },
+  "D": {
+    "type": "regular",
+    "times_to_run": 10,
+    "number_of_steps": 3500,
+    "walker": {
+      "n_dim": 2,
+      "magic_gates_placements": [],
+      "magic_gates_dests": [],
+      "obstacles": [],
+      "restart_chance": 0.1,
+      "restart_every": 5
+    },
+    "axis": [
+      1,
+      0
+    ],
+    "radius": 10
+  },
+  "E": {
+    "type": "regular",
+    "times_to_run": 10,
+    "number_of_steps": 2500,
+    "walker": {
+      "n_dim": 2,
+      "magic_gates_placements": [],
+      "magic_gates_dests": [],
+      "obstacles": []
+    },
+    "axis": [
+      1,
+      0
+    ],
+    "radius": 10
+  },
+  "F": {
+    "type": "regular",
+    "times_to_run": 10,
+    "number_of_steps": 3000,
+    "walker": {
+      "n_dim": 2,
+      "magic_gates_placements": [],
+      "magic_gates_dests": [],
+      "obstacles": []
+    },
+    "axis": [
+      1,
+      0
+    ],
+    "radius": 10
+  },
+  "G": {
+    "type": "regular",
+    "times_to_run": 10,
+    "number_of_steps": 4000,
+    "walker": {
+      "n_dim": 2,
+      "magic_gates_placements": [],
+      "magic_gates_dests": [],
+      "obstacles": []
+    },
+    "axis": [
+      1,
+      0
+    ],
+    "radius": 10
+  },
+  "H": {
+    "type": "regular",
+    "times_to_run": 10,
+    "number_of_steps": 6000,
+    "walker": {
+      "magic_gates_placements": [],
+      "magic_gates_dests": [],
+      "obstacles": [],
+      "n_dim": 2
+    },
+    "axis": [
+      1,
+      0
+    ],
+    "radius": 10
+  },
+  "I": {
+    "type": "regular",
+    "times_to_run": 10,
+    "number_of_steps": 5000,
+    "walker": {
+      "n_dim": 2,
+      "magic_gates_placements": [],
+      "magic_gates_dests": [],
+      "obstacles": []
+    },
+    "axis": [
+      1,
+      0
+    ],
+    "radius": 10
+  },
+  "J": {
+    "type": "regular",
+    "times_to_run": 10,
+    "number_of_steps": 4000,
+    "walker": {
+      "n_dim": 3,
+      "magic_gates_placements": [],
+      "magic_gates_dests": [],
+      "obstacles": []
+    },
+    "axis": [
+      1,
+      0,
+      0
+    ],
+    "radius": 10
+  },
+  "K": {
+    "type": "grid",
+    "times_to_run": 1,
+    "number_of_steps": 4000,
+    "walker": {
+      "n_dim": 2,
+      "magic_gates_placements": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          0
+        ]
+      ],
+      "magic_gates_dests": [
+        [
+          15,
+          15
+        ]
+      ],
+      "obstacles": [
+        [
+          5,
+          5
+        ]
+      ]
+    },
+    "axis": [
+      1,
+      0
+    ],
+    "radius": 10
+  },
+  "L": {
+    "type": "biased",
+    "times_to_run": 10,
+    "number_of_steps": 5000,
+    "walker": {
+      "n_dim": 3,
+      "magic_gates_placements": [],
+      "magic_gates_dests": [],
+      "obstacles": [],
+      "bias_direction": [
+        0,
+        0,
+        1
+      ],
+      "bias_strength": 0.1
+    },
+    "axis": [
+      1,
+      0,
+      0
+    ],
+    "radius": 10
+  },
+  "M": {
+    "type": "regular",
+    "times_to_run": 10,
+    "number_of_steps": 5000,
+    "walker": {
+      "n_dim": 4,
+      "magic_gates_placements": [],
+      "magic_gates_dests": [],
+      "obstacles": []
+    },
+    "axis": [
+      1,
+      0,
+      0,
+      0
+    ],
+    "radius": 10
+  },
+  "N": {
+    "type": "searcher",
+    "times_to_run": 1,
+    "number_of_steps": 5000,
+    "walker": {
+      "n_dim": 2,
+      "target": [
+        5,
+        7
+      ],
+      "magic_gates_placements": [],
+      "magic_gates_dests": [],
+      "obstacles": []
+    },
+    "axis": [
+      1,
+      0
+    ],
+    "radius": 10
+  },
+  "O": {
+    "type": "grid",
+    "times_to_run": 1,
+    "number_of_steps": 5000,
+    "walker": {
+      "n_dim": 3,
+      "magic_gates_placements": [],
+      "magic_gates_dests": [],
+      "obstacles": [],
+      "restart_every": 5,
+      "restart_chance": 0.7
+    },
+    "axis": [
+      1,
+      0,
+      0
+    ],
+    "radius": 10
+  }
+}
