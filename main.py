@@ -1,56 +1,11 @@
 import argparse
 import file_manager as fm
-from walker import RandomAngleWalker, RandomStepWalker, RandomGridWalker, BiasedRandomWalker, RandomSearcher
+from walker import RandomAngleWalker, RandomStepWalker, RandomGridWalker, BiasedRandomWalker, RandomSearcher, Walker
 import simulation
 from multiprocessing import pool
 import seaborn as sns  # type: ignore
 import matplotlib.pyplot as plt
 from typing import Any, Dict, List
-
-description: str = """
-A program that simulates random walks and saves to files of your choosing stats and graphs about them.
-To start, you need to specify the configuration file, the output file and the graphs output file.
-The configuration file is a json file with the following format:
-"X":{ - The name of the walker.
-    "walker_type": "regular" | "step" | "grid" | "biased" | "searcher". the type of the walker.
-    "times_to_run":  int > 0, the number of times to run the simulation.
-    "num_of_steps":  int > 0, the number of steps to take.
-    "walker": an object with the following properties:
-    {
-        "n_dim": 2,3 to produce walking graphs, or any other larger integer in abstract mode (that doesn't produce walking
-        graphs).
-        "magic_gates_placements": [[0, 0], [1, 1]], etc. It is a list of vectors from the specified dimension
-        at which the walker will enter an magically appear in one of the destinations.
-        "magic_gates_dests": [[0, 1], [1, 0]], etc. It is a list of vectors from the specified dimension where
-        the walker will be teleported to after entering a magic gate.
-        "obstacles": [[0.5, 0.5]], etc. It is a list of vectors from the specified dimension where the walker
-        will not be able to move.
-        Additionally, there can be optional values that determine the possibility of the walker to restart:
-        "restart_chance":  float. The chance of the walker to restart after taking a step. Must be between 0 and 1.
-        default is 0.
-        "restart_every":  int > 0. The number of steps after which the walker will restart. Default is 1.
-        If the walker type is "biased", you need to specify the following:
-        "bias_direction": [0,1], [1,0]. Unit vector representing the direction the walker will be biased in.
-        "bias_strength": float. The strength of the bias. Must be between 0 and 1.
-        If the walker type is "step", you need to specify the following:
-        "min_step_size": float > 0. The minimum step size of the walker.
-        "max_step_size": float > 0. The maximum step size of the walker.
-        If the walker type is "searcher", you need to specify the following:
-        "target":  [0,1], [2,3], etc. Vector representing the target of the searcher.
-    }
-    "axis": [0,1], [1,0], etc. Unit vectors of the specified dimension, representing the axis the simulation should
-    save stats about.
-    "radius":  float. The radius of the circle which the simulation will save stats about.
- """
-
-epilog: str = """Stats that will be saved and presented as graphs in a pdf file for each simulation:
-Average distance from origin per number of steps taken.
-Average distance from given axis per number of step taken.
-Average step at which the walker exited the radius,
- per the average distance at the end of the simulation.
-Average times(across the simulations) that the walker crossed the y-axis.
-Additionally, the pdf file will include a representation of the
- average path taken by the walker for each non-abstract simulation."""
 
 
 def worker(sim: simulation.Simulation) -> simulation.Simulation:
@@ -63,6 +18,26 @@ def worker(sim: simulation.Simulation) -> simulation.Simulation:
     return sim
 
 
+def create_walker(walker_type: str, data: Dict[str, Any]) -> Walker:
+    """
+    Create the walker object.
+    :param walker_type: The type of the walker.
+    :param data: The data to create the walker with.
+    :return: The walker object.
+    """
+    walker_classes = {
+        "regular": RandomAngleWalker,
+        "step": RandomStepWalker,
+        "grid": RandomGridWalker,
+        "biased": BiasedRandomWalker,
+        "searcher": RandomSearcher
+    }
+    if walker_type in walker_classes:
+        return walker_classes[walker_type](**data)
+    else:
+        raise ValueError("Invalid walker type.")
+
+
 def create_simulations(config: Dict[str, Any]) -> List[simulation.Simulation]:
     """
         Create the simulation objects.
@@ -72,13 +47,6 @@ def create_simulations(config: Dict[str, Any]) -> List[simulation.Simulation]:
     if len(config) == 0:
         raise ValueError("No simulations to create.")
     sims = []
-    walker_classes = {
-        "regular": RandomAngleWalker,
-        "step": RandomStepWalker,
-        "grid": RandomGridWalker,
-        "biased": BiasedRandomWalker,
-        "searcher": RandomSearcher
-    }
     for simu in config:
         # Set default restart options, set names.
         data = config[simu]["walker"]
@@ -86,11 +54,7 @@ def create_simulations(config: Dict[str, Any]) -> List[simulation.Simulation]:
         data.setdefault("restart_chance", 0.0)
         data.setdefault("name", simu)
         # Build the walker by type.
-        walker_type = config[simu]["type"]
-        if walker_type in walker_classes:
-            w = walker_classes[walker_type](**data)
-        else:
-            raise ValueError("Invalid walker type.")
+        w = create_walker(config[simu]["type"], data)
         sim = simulation.Simulation(config[simu]["times_to_run"], config[simu]["number_of_steps"], w
                                     , config[simu]["axis"], config[simu]["radius"])
         sims.append(sim)
@@ -222,6 +186,51 @@ def parse_arguments() -> argparse.Namespace:
     Parse the arguments from the command line.
     :return: Namespace with the parsed arguments.
     """
+    description: str = """
+    A program that simulates random walks and saves to files of your choosing stats and graphs about them.
+    To start, you need to specify the configuration file, the output file and the graphs output file.
+    The configuration file is a json file with the following format:
+    "X":{ - The name of the walker.
+        "walker_type": "regular" | "step" | "grid" | "biased" | "searcher". the type of the walker.
+        "times_to_run":  int > 0, the number of times to run the simulation.
+        "num_of_steps":  int > 0, the number of steps to take.
+        "walker": an object with the following properties:
+        {
+            "n_dim": 2,3 to produce walking graphs, or any other larger integer in abstract mode (that doesn't produce walking
+            graphs).
+            "magic_gates_placements": [[0, 0], [1, 1]], etc. It is a list of vectors from the specified dimension
+            at which the walker will enter an magically appear in one of the destinations.
+            "magic_gates_dests": [[0, 1], [1, 0]], etc. It is a list of vectors from the specified dimension where
+            the walker will be teleported to after entering a magic gate.
+            "obstacles": [[0.5, 0.5]], etc. It is a list of vectors from the specified dimension where the walker
+            will not be able to move in radius 1 from.
+            Additionally, there can be optional values that determine the possibility of the walker to restart:
+            "restart_chance":  float. The chance of the walker to restart after taking a step. Must be between 0 and 1.
+            default is 0.
+            "restart_every":  int > 0. The number of steps after which the walker will restart. Default is 1.
+            If the walker type is "biased", you need to specify the following:
+            "bias_direction": [0,1], [1,0]. Unit vector representing the direction the walker will be biased in.
+            "bias_strength": float. The strength of the bias. Must be between 0 and 1.
+            If the walker type is "step", you need to specify the following:
+            "min_step_size": float > 0. The minimum step size of the walker.
+            "max_step_size": float > 0. The maximum step size of the walker.
+            If the walker type is "searcher", you need to specify the following:
+            "target":  [0,1], [2,3], etc. Vector representing the target of the searcher.
+        }
+        "axis": [0,1], [1,0], etc. Unit vectors of the specified dimension, representing the axis the simulation should
+        save stats about.
+        "radius":  float. The radius of the circle which the simulation will save stats about.
+     """
+
+    epilog: str = """Stats that will be saved and presented as graphs in a pdf file for each simulation:
+    Average distance from origin per number of steps taken.
+    Average distance from given axis per number of step taken.
+    Average step at which the walker exited the radius,
+     per the average distance at the end of the simulation.
+    Average times(across the simulations) that the walker crossed the y-axis.
+    Additionally, the pdf file will include a representation of the
+     average path taken by the walker for each non-abstract simulation."""
+
     parser = argparse.ArgumentParser(description=description,
                                      epilog=epilog, formatter_class=argparse.RawTextHelpFormatter)
     parser.add_argument("config_file", type=str, help="The file with the walks configuration."
@@ -230,7 +239,21 @@ def parse_arguments() -> argparse.Namespace:
                                                       " Must be a .txt file.")
     parser.add_argument("graphs_output_file", type=str, help="The file where the graphs will be saved."
                                                              " Must be a .pdf file.")
-    return parser.parse_args()
+    namespace = parser.parse_args()
+    # Check if the files are of correct formats.
+    if not namespace.config_file.endswith(".json"):
+        print("The configuration file must be a JSON file.")
+        print("The program will now exit.")
+        exit(1)
+    if not namespace.output_file.endswith(".txt"):
+        print("The output file must be a .txt file.")
+        print("The program will now exit.")
+        exit(1)
+    if not namespace.graphs_output_file.endswith(".pdf"):
+        print("The graphs output file must be a .pdf file.")
+        print("The program will now exit.")
+        exit(1)
+    return namespace
 
 
 def save_results(sims: List[simulation.Simulation], output_file: str) -> None:
@@ -265,19 +288,6 @@ def generate_and_save_graphs(sims: List[simulation.Simulation], graphs_output_fi
 
 def main():
     args = parse_arguments()
-    # Check if the files are of correct formats.
-    if not args.config_file.endswith(".json"):
-        print("The configuration file must be a JSON file.")
-        print("The program will now exit.")
-        exit(1)
-    if not args.output_file.endswith(".txt"):
-        print("The output file must be a .txt file.")
-        print("The program will now exit.")
-        exit(1)
-    if not args.graphs_output_file.endswith(".pdf"):
-        print("The graphs output file must be a .pdf file.")
-        print("The program will now exit.")
-        exit(1)
     # Load the config file.
     try:
         d: Dict[str, Any] = fm.load_json(args.config_file)
