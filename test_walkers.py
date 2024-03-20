@@ -1,3 +1,6 @@
+import numpy as np
+
+import walker
 from walker import exited_radius, RandomAngleWalker, RandomStepWalker, Walker, RandomGridWalker, BiasedRandomWalker
 import pytest
 
@@ -292,6 +295,17 @@ def test_dist_from_axis_after_negative_steps():
         assert False, "dist_from_axis_after should raise ValueError for negative steps"
 
 
+def test_dist_from_axis_after_wrong_dimension():
+    w = RandomAngleWalker("Test")
+    w.walk(10)
+    try:
+        w.dist_from_axis_after([1, 0, 0], 5)
+    except ValueError:
+        pass
+    else:
+        assert False, "dist_from_axis_after should raise ValueError for wrong dimension"
+
+
 def test_dist_from_axis_after_too_many_steps():
     w = RandomAngleWalker("Test")
     w.walk(10)
@@ -432,3 +446,110 @@ def test_get_path_and_get_current_position():
     path = w.get_path()
     assert len(path) == 11, "Path should have 11 points after 10 steps"
     assert all(w.get_current_position()) == all(path[-1]), "Current position should be the last point in the path"
+
+
+def test_get_basis_vectors():
+    w = RandomStepWalker("Test", min_step_size=0.5, max_step_size=1.5)
+    assert w.get_basis_vectors() == [[1, 0], [0, 1]], "Basis vectors should be [[1, 0], [0, 1]] for RandomStepWalker"
+
+
+def test_get_basis_vectors_10_dim():
+    w = RandomAngleWalker("Test", n_dim=10)
+    assert w.get_basis_vectors() == [[1, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+                                     [0, 0, 1, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
+                                     [0, 0, 0, 0, 1, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
+                                     [0, 0, 0, 0, 0, 0, 1, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
+                                     [0, 0, 0, 0, 0, 0, 0, 0, 1, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 1]]
+
+
+def test_normalize_vector():
+    dim = 3
+    vector = walker.normalize_vector(dim)
+    assert isinstance(vector, np.ndarray), "Output should be a numpy array"
+    assert len(vector) == dim, "Output vector should have the same dimension as the input"
+    assert pytest.approx(np.linalg.norm(vector)) == 1, "Output vector should be a unit vector"
+
+
+def test_normalize_vector_10_dim():
+    dim = 10
+    vector = walker.normalize_vector(dim)
+    assert isinstance(vector, np.ndarray), "Output should be a numpy array"
+    assert len(vector) == dim, "Output vector should have the same dimension as the input"
+    assert pytest.approx(np.linalg.norm(vector)) == 1, "Output vector should be a unit vector"
+
+
+def test_normalize_vector_no_dim():
+    with pytest.raises(ValueError):
+        walker.normalize_vector(0)
+
+
+def test_normalize_vector_negative_dim():
+    with pytest.raises(ValueError):
+        walker.normalize_vector(-1)
+
+
+def test_getters():
+    w = RandomStepWalker("Test", min_step_size=0.5, max_step_size=1.5)
+    w.walk(10)
+    assert all(w.get_current_position()) == all(
+        w.get_path()[-1]), "Current position should be the last point in the path"
+    assert w.get_basis_vectors() == [[1, 0], [0, 1]], "Basis vectors should be [[1, 0], [0, 1]] for RandomStepWalker"
+    assert w.get_dim() == 2, "Number of dimensions should be 2 for RandomStepWalker"
+    assert w.get_name() == "Test", "Name should be 'Test'"
+    assert w.get_restart_every() == 1, "Restart every should be 1"
+
+
+def test_validate_gates():
+    with pytest.raises(ValueError):
+        RandomGridWalker("Test", magic_gates_dests=[[4, 5, 6]], magic_gates_placements=[[0, 1], [0, -1]])
+    with pytest.raises(ValueError):
+        RandomGridWalker("Test", magic_gates_dests=[[4, 5]], magic_gates_placements=[[0, 1, 1]])
+    with pytest.raises(ValueError):
+        RandomGridWalker("Test", magic_gates_placements=[[0, 1], [0, 1]])
+    with pytest.raises(ValueError):
+        RandomGridWalker("Test", magic_gates_dests=[[4, 5]])
+    with pytest.raises(ValueError):
+        RandomGridWalker("Test", magic_gates_placements=[[0, "1"], [0, -1]], magic_gates_dests=[[4, 5]])
+    with pytest.raises(ValueError):
+        RandomGridWalker("Test", magic_gates_placements=[[0, 1], [0, -1]], magic_gates_dests=[[4, "5"]])
+
+
+def test_validate_obstacles():
+    with pytest.raises(ValueError):
+        RandomGridWalker("Test", obstacles=[[4, 5, 6]])
+    with pytest.raises(ValueError):
+        RandomGridWalker("Test", obstacles=[[4, "5"]])
+
+
+def test_validate_restart_every():
+    with pytest.raises(ValueError):
+        RandomGridWalker("Test", restart_every=-1)
+
+
+def test_validate_restart_chance():
+    with pytest.raises(ValueError):
+        RandomGridWalker("Test", restart_chance=2)
+
+
+def test_set_path():
+    w = RandomStepWalker("Test")
+    w.set_path([[0, 0], [1, 1], [2, 2]])
+    assert w.get_path() == [[0, 0], [1, 1], [2, 2]], "Path should be set to [[0, 0], [1, 1], [2, 2]]"
+
+
+def test_set_path_empty():
+    w = RandomStepWalker("Test")
+    with pytest.raises(ValueError):
+        w.set_path([])
+
+
+def test_step_size_negative_step_size():
+    with pytest.raises(ValueError):
+        RandomStepWalker("Test", min_step_size=-1, max_step_size=1)
+
+
+def test_validate_target():
+    with pytest.raises(ValueError):
+        walker.RandomSearcher("Test", target=[4, 5, 6])
+    with pytest.raises(ValueError):
+        walker.RandomSearcher("Test", target=[4, "5"])

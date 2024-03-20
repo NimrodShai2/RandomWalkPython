@@ -6,6 +6,17 @@ from typing import List, Optional
 from scipy.spatial import KDTree  # type: ignore
 
 
+def normalize_vector(dimen: int = 2) -> np.ndarray:
+    """
+    Normalize a random direction vector to the unit size.
+    """
+    if dimen <= 1:
+        raise ValueError("Number of dimensions must be positive and greater than 2.")
+    direction = np.random.randn(dimen)
+    direction /= np.linalg.norm(direction)
+    return direction
+
+
 def exited_radius(position: List, radius: float) -> bool:
     """
     Check if the walker has exited the radius.
@@ -115,9 +126,6 @@ class Walker(ABC):
     def validate_name(name):
         if name == "":
             raise ValueError("Name must not be empty.")
-
-    def __str__(self):
-        return f"Walker Path: {self._path}"
 
     def get_dim(self) -> int:
         """
@@ -279,14 +287,6 @@ class Walker(ABC):
         """
         return self._restart_every
 
-    def normalize_vector(self):
-        """
-        Normalize a random direction vector to the unit size.
-        """
-        direction = np.random.randn(self._dim)
-        direction /= np.linalg.norm(direction)
-        return direction
-
     def set_path(self, path: List):
         """
         Set the path of the walker.
@@ -318,7 +318,7 @@ class RandomAngleWalker(Walker):
         :return:
         """
         self._current_position = self._current_position[:]
-        direction = self.normalize_vector()
+        direction = normalize_vector(self._dim)
         self._current_position += direction * self.__step_size
         return list(self._current_position)
 
@@ -350,7 +350,7 @@ class RandomStepWalker(Walker):
         """
         step_size = random.uniform(self.__min_step_size, self.__max_step_size)
         self._current_position = self._current_position[:]
-        direction = self.normalize_vector()
+        direction = normalize_vector(self._dim)
         self._current_position += direction * step_size
         return list(self._current_position)
 
@@ -429,7 +429,7 @@ class BiasedRandomWalker(Walker):
         :return:
         """
         self._current_position = self._current_position[:]
-        direction = self.normalize_vector()
+        direction = normalize_vector(self._dim)
         if self.__bias_direction:
             bias_direction = np.array(self.__bias_direction)
         else:

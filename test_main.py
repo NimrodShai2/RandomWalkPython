@@ -439,3 +439,141 @@ def test_generate_and_save_graphs_empty_simulations(mock_save_graphs, mock_gener
     # Call the function with an empty list of simulations
     with pytest.raises(IndexError):
         main.generate_and_save_graphs([], 'output.pdf')
+
+
+@patch('json.load')
+@patch('builtins.open', new_callable=mock_open)
+def test_create_simulations_invalid_walker_type(mock_file, mock_json):
+    # Mock the configuration file with an invalid walker type
+    mock_json.return_value = {
+        "X": {
+            "type": "unknown",
+            "times_to_run": 10,
+            "number_of_steps": 100,
+            "walker": {
+                "n_dim": 2
+            },
+            "axis": [0, 1],
+            "radius": 10.0
+        }
+    }
+    # Call the function with the mock configuration file
+    with pytest.raises(ValueError):
+        main.create_simulations(mock_json.return_value)
+
+
+@patch('argparse.ArgumentParser.parse_args')
+def test_parsing_invalid_json_file(mock_args):
+    mock_args.return_value = argparse.Namespace(config_file='config.jso', output_file='output.txt',
+                                                graphs_output_file='output.pdf')
+    with pytest.raises(SystemExit):
+        main.parse_arguments()
+
+
+@patch('argparse.ArgumentParser.parse_args')
+def test_parsing_invalid_output_file(mock_args):
+    mock_args.return_value = argparse.Namespace(config_file='config.json', output_file='output.tx',
+                                                graphs_output_file='output.pdf')
+    with pytest.raises(SystemExit):
+        main.parse_arguments()
+
+
+@patch('argparse.ArgumentParser.parse_args')
+def test_parsing_invalid_graphs_output_file(mock_args):
+    mock_args.return_value = argparse.Namespace(config_file='config.json', output_file='output.txt',
+                                                graphs_output_file='output.pd')
+    with pytest.raises(SystemExit):
+        main.parse_arguments()
+
+
+def test_create_walker():
+    mock_data = {
+        "name": "Test",
+        "n_dim": 2,
+        "obstacles": [],
+        "magic_gates_placements": [],
+        "magic_gates_dests": [],
+        "restart_chance": 0,
+        "restart_every": 1
+
+    }
+    walker = main.create_walker("regular", mock_data)
+    assert isinstance(walker, RandomAngleWalker)
+
+
+def test_create_walker_invalid_type():
+    mock_data = {
+        "name": "Test",
+        "n_dim": 2,
+        "obstacles": [],
+        "magic_gates_placements": [],
+        "magic_gates_dests": [],
+        "restart_chance": 0,
+        "restart_every": 1
+
+    }
+    with pytest.raises(ValueError):
+        main.create_walker("unknown", mock_data)
+
+
+def test_create_walker_invalid_data():
+    mock_data = {
+        "name": "Test",
+        "n_dim": "3",
+        "obstacles": [],
+        "magic_gates_placements": [],
+        "magic_gates_dests": [],
+        "restart_chance": 0,
+        "restart_every": 1
+
+    }
+    with pytest.raises(TypeError):
+        main.create_walker("regular", mock_data)
+
+
+@patch('json.load')
+@patch('builtins.open', new_callable=mock_open)
+def test_create_simulations_invalid_config(mock_file, mock_json):
+    mock_json.return_value = {
+        "X": {
+            "type": "step",
+            "times_to_run": "10",
+            "number_of_steps": 100,
+            "walker": {
+                "restart_chance": 0,
+                "restart_every": 1,
+                "n_dim": 2,
+                "magic_gates_placements": [],
+                "magic_gates_dests": [],
+                "obstacles": [],
+            },
+            "axis": [0, 1],
+            "radius": 10.0
+        }
+    }
+    with pytest.raises(TypeError):
+        main.create_simulations(mock_json.return_value)
+
+
+@patch('argparse.ArgumentParser.parse_args')
+@patch('builtins.open', side_effect=FileNotFoundError)
+def test_main_file_not_found(mock_open, mock_args):
+    mock_args = argparse.Namespace(config_file='config.json', output_file='output.txt', graphs_output_file='output.pdf')
+    with pytest.raises(SystemExit):
+        main.main()
+
+
+@patch('matplotlib.pyplot.figure')
+@patch('matplotlib.pyplot.Axes')
+def test_generate_path_plot_3d(mock_axes, mock_figure):
+    # Create a mock simulation with a 3D walker
+    sim = Simulation(10, 100, RandomAngleWalker("Test", n_dim=3), [0, 1, 2], 10.0)
+    sim.run()
+    sims = [sim]
+
+    # Call the function with the mock simulations
+    main.generate_path_plot(sims)
+
+    # Check that figure and Axes were called
+    count = mock_figure.call_count
+    assert count >= 1
